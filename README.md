@@ -35,7 +35,7 @@ Fleet Manager is an fleet managment system which allows the following activities
       Employee has a limited access in making changes to the master data in the system. He has the ability to perform the following actions 
       - Create a user
       - Update the user profile
-      - Create, Read and Update a Bus(Vehicle Information)
+      - Create, Read, Delete and Update a Bus(Vehicle Information)
       - Create, Read and Update a Garage entry
       - Create, Read and Update a Maintenance Request on a given bus
 
