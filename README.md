@@ -98,7 +98,8 @@ Please do not delelte any content from the FleetManagementSystem.DataAccess.Migr
 
 Q1: ER diagrams are attached in repository
 
-Q2: Function to implement GetResaleValue, FleetManagementSystem => Areas => Controllers => User => BusController.cs => GetResaleValue(int? id) function
+Q2: Function to implement GetResaleValue
+   - FleetManagementSystem => Areas => Controllers => User => BusController.cs => GetResaleValue(int? id) function
 
 Q3: GridView implementation:
    - FleetManagementSystem => Areas => User => Controllers => BusController.cs
