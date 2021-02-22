@@ -35,7 +35,7 @@ Fleet Manager is an fleet managment system which allows the following activities
       Employee has a limited access in making changes to the master data in the system. He has the ability to perform the following actions 
       - Create a user
       - Update the user profile
-      - Create, Read and Update a Bus(Vehicle Information)
+      - Create, Read, Delete and Update a Bus(Vehicle Information)
       - Create, Read and Update a Garage entry
       - Create, Read and Update a Maintenance Request on a given bus
 
@@ -72,6 +72,12 @@ Fleet Manager is an fleet managment system which allows the following activities
 
 **Future enhancements/updates:**
 
+- Assigning Technician to a garage
+- Show maintenance requests only related to technician
+- Allow multiple closest garages assignment to a garage
+- Only allow Admin to delete bus records
+- Create a Maintenance header entity to envolope all the maintenance requests done at a time 
+
 
 **Assumptions:**
 
@@ -88,3 +94,14 @@ For running the database migration locally, please follow the below steps
 
 Note:
 Please do not delelte any content from the FleetManagementSystem.DataAccess.Migration folder
+
+
+Q1: ER diagrams are attached in repository
+
+Q2: Function to implement GetResaleValue
+   - FleetManagementSystem => Areas => User => Controllers => BusController.cs => GetResaleValue(int? id) function
+
+Q3: GridView implementation:
+   - FleetManagementSystem => Areas => User => Controllers => BusController.cs
+   - FleetManagementSystem => wwwroot => js => busDetailsModal.js
+   - FleetManagementSystem => Areas => User => Views => Bus => __BusModalPartial.cshtml   
