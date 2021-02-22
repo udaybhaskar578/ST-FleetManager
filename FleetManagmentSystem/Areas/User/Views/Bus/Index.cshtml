@@ -1,0 +1,42 @@
+﻿@model IEnumerable<FleetManagementSystem.Models.Bus>
+
+<!-- Modal placeholder -->
+<div id="PlaceHolderHere"></div>
+
+
+<div class="row pb-3 backgroundWhite">
+
+    @foreach (var bus in Model)
+    {
+        <div class="col-lg-3 col-md-6">
+            <div style="height:100%" class="row p-2">
+                <div class="col-12  p-1" style="border:1px solid #008cba; border-radius: 5px;">
+                    <div class="card" style="border:0px;height: 90%;">
+                        <img style="height:172Px" src="@bus.ImageUrl" class="card-img-top rounded" data-toggle="ajax-modal" data-target="#editBus" data-url="@Url.Action("Details","Bus",new { id = bus.Id })" />
+                        <div style="padding-top:5px;" class="pl-1">
+                            <p class="card-title h5">Reg #: <b style="color:#2c3e50">@bus.RegistrationNumber</b></p>
+                        </div>
+                        <div style="padding-left:5px;">
+                            <p>Make: <b class="">@bus.Make</b></p>
+                            <p>Model: <b class="">@bus.Model</b></p>
+                            <p>Year: <b class="">@bus.Year</b></p>
+                        </div>
+                        <div style="padding-left:5px;">
+                            <p style="color:maroon">Odometer Reading: <b class="">@bus.OdometerReading</b></p>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" style="width:100%" class="btn btn-primary popup" data-toggle="ajax-modal" data-target="#editBus" data-url="@Url.Action("Details","Bus",new { id = bus.Id })">Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/busDetailsModal.js" asp-append-version="true"></script>
+}

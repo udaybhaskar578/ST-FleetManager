@@ -1,0 +1,95 @@
+﻿@model FleetManagementSystem.Models.ViewModels.GarageViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var title = "Add Garage";
+}
+
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (Model.Garage.Id != 0)
+        {
+            //edit
+            title = "Edit Garage";
+            <input type="hidden" asp-for="Garage.Id" />
+        }
+        <div class="col-12 border-bottom">
+            <h2 class="text-primary">@title</h2>
+        </div>
+        <div class="col-8 pt-4">
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Garage.Name"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Garage.Name" class="form-control" />
+                    <span asp-validation-for="Garage.Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Garage.StreetAddress"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Garage.StreetAddress" class="form-control" />
+                    <span asp-validation-for="Garage.StreetAddress" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Garage.City"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Garage.City" class="form-control" />
+                    <span asp-validation-for="Garage.City" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Garage.State"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Garage.State" class="form-control" />
+                    <span asp-validation-for="Garage.State" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Garage.ZipCode"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Garage.ZipCode" class="form-control" />
+                    <span asp-validation-for="Garage.City" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    Category
+                </div>
+                <div class="col-8">
+                    @Html.DropDownListFor(m => m.Garage.ClosestGarageId, Model.ClosestGarageList, "-Select the Closest Garage",
+                   new { @class = "form-control" })
+                    <span asp-validation-for="Garage.ClosestGarageId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    @if (Model.Garage.Id != 0)
+                    {
+                        <partial name="_UpdateAndBackToListButton" model="Model.Garage.Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CreateAndBackToListButton" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

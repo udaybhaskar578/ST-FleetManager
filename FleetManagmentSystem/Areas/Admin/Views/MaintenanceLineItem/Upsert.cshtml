@@ -1,0 +1,116 @@
+﻿@model FleetManagementSystem.Models.ViewModels.MaintenanceLineItemViewModel
+@using FleetManagementSystem.Utilities
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var title = "Create Maintenance Line Item";
+}
+
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-12 border-bottom">
+            @if (Model.MaintenanceLineItem.Id != 0)
+            {
+                //edit
+                title = "Edit Maintenance Line Item";
+                <input type="hidden" asp-for="MaintenanceLineItem.Id" />
+            }
+            <h2 class="text-primary">@title</h2>
+        </div>
+        <div class="col-8 pt-4">
+            <div class="form-group row">
+                <div class="col-4">
+                    Bus
+                </div>
+                @if (Model.MaintenanceLineItem.Id != 0)
+                {
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.MaintenanceLineItem.BusId, Model.BusList, "-Select the Bus",
+                       new { @class = "form-control", disabled = "disabled" })
+                        <span asp-validation-for="MaintenanceLineItem.BusId" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.MaintenanceLineItem.BusId, Model.BusList, "-Select the Bus",
+                       new { @class = "form-control"})
+                        <span asp-validation-for="MaintenanceLineItem.BusId" class="text-danger"></span>
+                    </div>
+                }
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    Maintenance Request Type
+                </div>
+                @if (Model.MaintenanceLineItem.Id != 0)
+                {
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.MaintenanceLineItem.MaintenanceRequestTypeId, Model.RequestTypeList, "-Select the maintenance request type",
+                       new { @class = "form-control", disabled = "disabled" })
+                        <span asp-validation-for="MaintenanceLineItem.MaintenanceRequestTypeId" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.MaintenanceLineItem.MaintenanceRequestTypeId, Model.RequestTypeList, "-Select the maintenance request type",
+                       new { @class = "form-control" })
+                        <span asp-validation-for="MaintenanceLineItem.MaintenanceRequestTypeId" class="text-danger"></span>
+                    </div>
+                }
+
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    Request Date
+                </div>
+                @if (Model.MaintenanceLineItem.Id != 0)
+                {
+                    <div class="col-8">
+                        <input disabled type="date" asp-for="MaintenanceLineItem.RequestRaisedOn" class="form-control" />
+                        <span asp-validation-for="MaintenanceLineItem.RequestRaisedOn" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-8">
+                        <input value ="DateTime.Now()"type="date" asp-for="MaintenanceLineItem.RequestRaisedOn" class="form-control" />
+                        <span asp-validation-for="MaintenanceLineItem.RequestRaisedOn" class="text-danger"></span>
+                    </div>
+                }
+            </div>
+            @if (Model.MaintenanceLineItem.Id != 0)
+            {
+                <div class="form-group row">
+                    <div class="col-4">
+                        Current Status
+                    </div>
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.MaintenanceLineItem.Status, new SelectList(Constants.RequestStatus, "Key", "Value"), "-Select maintenance request status",
+                       new { @class = "form-control"})
+                        <span asp-validation-for="MaintenanceLineItem.Status" class="text-danger"></span>
+                    </div>
+                </div>
+            }
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    @if (Model.MaintenanceLineItem.Id != 0)
+                    {
+                        <partial name="_UpdateAndBackToListButton" model="Model.MaintenanceLineItem.Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CreateAndBackToListButton" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

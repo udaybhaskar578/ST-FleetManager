@@ -1,0 +1,77 @@
+﻿@model FleetManagementSystem.Models.Bus
+@using FleetManagementSystem.Utilities
+
+@{
+//var resalueValueText = "Currently the bus is not available for resale.";
+//if(@Model.ResaleValue != 0)
+//{
+//    resalueValueText = Model.ResaleValue.ToString();
+//}
+}
+<div class="modal fade" id="editBus">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Bus</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+
+            <div class="modal-body form-horizontal">
+                <form action="Bus/Details">
+                    <input type="hidden" asp-for="@Model.Id" id="busId" value="@Model.Id" />
+                    <input type="hidden" asp-for="@Model.AirConditioning" class="form-control" />
+                    <input type="hidden" asp-for="@Model.CurrentStatus" class="form-control" />
+                    <div class="form-group row">
+                        <div class="col-4">
+                            <label asp-for="@Model.Year"></label>
+                        </div>
+                        <div class="col-8">
+                            <input asp-for="@Model.Year" class="form-control" />
+                            <span asp-validation-for="@Model.Year" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4">
+                            Maximum Capacity
+                        </div>
+                        <div class="col-8">
+                            @Html.DropDownListFor(m => m.MaximumCapacity, new SelectList(Constants.PassengerCapacity, "Key", "Value"), "-Select maximum passenger capacity",
+                           new { @class = "form-control" })
+                            <span asp-validation-for="MaximumCapacity" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-4">
+                            <label asp-for="@Model.OdometerReading"></label>
+                        </div>
+                        <div class="col-8">
+                            <input asp-for="@Model.OdometerReading" class="form-control" />
+                            <span asp-validation-for="OdometerReading" class="text-danger"></span>
+                        </div>
+                    </div>
+                </form>
+                <hr />
+                <div id="resale-section" class="row">
+                    <div class="col-4">
+                        <label>Resale Value: </label>
+                        <br />
+                    </div>
+                    <div class="col-8">
+                        <p id="resaleValue">
+
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                    <button class="btn btn-primary" data-save="modal" type="button">
+                        <i class="loader"></i>
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

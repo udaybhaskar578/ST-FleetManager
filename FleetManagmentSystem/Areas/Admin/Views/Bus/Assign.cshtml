@@ -1,0 +1,64 @@
+﻿@model FleetManagementSystem.Models.ViewModels.GarageAssignmentViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var title = "Assign Garage";
+}
+
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-12 border-bottom">
+            <h2 class="text-primary">@title</h2>
+            <input type="hidden" asp-for="@Model.GarageAssignment.Id" />
+        </div>
+        <div class="col-8 pt-4">
+            <div class="form-group row">
+                <div class="col-4">
+                    Bus
+                </div>
+                <div class="col-8">
+                    @Html.DropDownListFor(m => m.GarageAssignment.BusId, Model.BusList, "-Select the Bus",
+                   new { @class = "form-control" })
+                    <span asp-validation-for="GarageAssignment.BusId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    Garage
+                </div>
+                <div class="col-8">
+                    @Html.DropDownListFor(m => m.GarageAssignment.GarageId, Model.GarageList, "-Select the Garage",
+                   new { @class = "form-control" })
+                    <span asp-validation-for="GarageAssignment.GarageId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    Check in Date
+                </div>
+                <div class="col-8">
+                    <input value="@DateTime.Now" type="date" asp-for="GarageAssignment.CheckIn" class="form-control" />
+                    <span asp-validation-for="GarageAssignment.CheckIn" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    @if (Model.GarageAssignment.Id != 0)
+                    {
+                        <partial name="_UpdateAndBackToListButton" model="Model.GarageAssignment.Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CreateAndBackToListButton" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

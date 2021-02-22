@@ -1,0 +1,84 @@
+﻿@model FleetManagementSystem.Models.MaintenanceRequestType
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var title = "Create Maintenance Type";
+}
+
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (Model.Id != 0)
+        {
+            //edit
+            title = "Edit Maintenance Type";
+            <input type="hidden" asp-for="Id" />
+        }
+        <div class="col-12 border-bottom">
+            <h2 class="text-primary">@title</h2>
+        </div>
+        <div class="col-8 pt-4">
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Name"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Description"></label>
+                </div>
+                <div class="col-8">
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="ListPrice"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="ListPrice" class="form-control" />
+                    <span asp-validation-for="ListPrice" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="IsActive"></label>
+                </div>
+                <div class="col-1">
+                    <input asp-for="IsActive" class="form-control" />
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    @if (Model.Id != 0)
+                    {
+                        <partial name="_UpdateAndBackToListButton" model="Model.Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CreateAndBackToListButton" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.tiny.cloud/1/phb7sof5fhvi2ospzswjt28tx0ek7tlljfrejtcyk80uy54w/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'lists',
+            menubar: 'file edit format'
+        });
+    </script>
+
+}
