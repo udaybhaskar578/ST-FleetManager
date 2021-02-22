@@ -102,6 +102,6 @@ Q2: Function to implement GetResaleValue
    - FleetManagementSystem => Areas => Controllers => User => BusController.cs => GetResaleValue(int? id) function
 
 Q3: GridView implementation:
-   - FleetManagementSystem => Areas => User => Controllers => BusController.cs
+   - FleetManagementSystem => Areas => Controllers => User => BusController.cs
    - FleetManagementSystem => wwwroot => js => busDetailsModal.js
    - FleetManagementSystem => Areas => User => Views => Bus => __BusModalPartial.cshtml   
