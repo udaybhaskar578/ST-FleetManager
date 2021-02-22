@@ -1,5 +1,6 @@
 ﻿using FleetManagementSystem.DataAccess.Repository.IRepository;
 using FleetManagementSystem.Models;
+using FleetManagementSystem.Models.ViewModel;
 using FleetManagementSystem.Models.ViewModels;
 using FleetManagementSystem.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,7 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             return View();
         }
 
+        //Insert or Update action for Maintenance line item
         public IActionResult Upsert(int? id)
         {
             MaintenanceLineItemViewModel mliVM = new MaintenanceLineItemViewModel()
@@ -43,65 +45,91 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
                     Value = i.Id.ToString()
                 })
             };
+            try
+            {
+                if (id == null)
+                {
+                    return View(mliVM);
+                }
+                mliVM.MaintenanceLineItem = _unitOfWork.MaintenanceLineItem.Get(id.GetValueOrDefault());
+                if (mliVM == null)
+                {
+                    throw new Exception("Unable to find the maintenance line item");
+                }
+            }
+            catch(Exception ex)
+            {
+                var evm = new ErrorViewModel();
+                evm.ErrorMessage = ex.Message.ToString();
+                return View("Error", evm);
+            }
 
-            if (id == null)
-            {
-                return View(mliVM);
-            }
-            mliVM.MaintenanceLineItem = _unitOfWork.MaintenanceLineItem.Get(id.GetValueOrDefault());
-            if (mliVM == null)
-            {
-                return NotFound();
-            }
             return View(mliVM);
         }
 
-
+        //Insert/Update Maintenance Line item in Database 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(MaintenanceLineItemViewModel mliVM)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (mliVM.MaintenanceLineItem.Id == 0)
+                if (ModelState.IsValid)
                 {
-                    var garageAssignment = _unitOfWork.GarageAssignment.
-                                GetFirstOrDefault(u => u.BusId == mliVM.MaintenanceLineItem.BusId && u.CheckOut == null, includeProperties: "Bus");
-
-                    mliVM.MaintenanceLineItem.GarageId = garageAssignment.GarageId;
-                    mliVM.MaintenanceLineItem.Bus = garageAssignment.Bus;
-                    mliVM.MaintenanceLineItem.Status = Constants.RequestStatus["Waiting for Technician"];
-                    mliVM.MaintenanceLineItem.Bus.CurrentStatus = Constants.BusStatus["Scheduled for maintenance"];
-                    _unitOfWork.MaintenanceLineItem.Add(mliVM.MaintenanceLineItem);
-                }
-                else
-                {
-                    var mli = _unitOfWork.MaintenanceLineItem.GetFirstOrDefault(u => u.Id == mliVM.MaintenanceLineItem.Id, includeProperties: "Bus");
-                    mli.Status = mliVM.MaintenanceLineItem.Status;
-                    if (mli.Status == Constants.RequestStatus["Complete"])
+                    if (mliVM.MaintenanceLineItem.Id == 0)
                     {
-                        mli.CompletedOn = DateTime.Today.Date;
-                        var pendingMLI = _unitOfWork.MaintenanceLineItem.GetAll(u => u.Id != mli.Id
-                                        && u.BusId == mli.BusId && u.GarageId == mli.GarageId
-                                        && u.Status != Constants.RequestStatus["Complete"]);
-                        if (pendingMLI.Count() == 0)
+                        var garageAssignment = _unitOfWork.GarageAssignment.
+                                    GetFirstOrDefault(u => u.BusId == mliVM.MaintenanceLineItem.BusId && u.CheckOut == null, includeProperties: "Bus");
+
+                        mliVM.MaintenanceLineItem.GarageId = garageAssignment.GarageId;
+                        mliVM.MaintenanceLineItem.Bus = garageAssignment.Bus;
+                        //Update the MLI status to waiting for technician
+                        mliVM.MaintenanceLineItem.Status = Constants.RequestStatus["Waiting for Technician"];
+                        //Update the Current status of the bus to scheduled for maintenance
+                        mliVM.MaintenanceLineItem.Bus.CurrentStatus = Constants.BusStatus["Scheduled for maintenance"];
+                        _unitOfWork.MaintenanceLineItem.Add(mliVM.MaintenanceLineItem);
+                    }
+                    else
+                    {
+                        var mli = _unitOfWork.MaintenanceLineItem.GetFirstOrDefault(u => u.Id == mliVM.MaintenanceLineItem.Id, includeProperties: "Bus");
+                        mli.Status = mliVM.MaintenanceLineItem.Status;
+                        if (mli.Status == Constants.RequestStatus["Complete"])
                         {
-                            mli.Bus.CurrentStatus = Constants.BusStatus["Ready for use"];
+                            //Mark completion date for the Maintenance Line Item
+                            mli.CompletedOn = DateTime.Today.Date;
+                            // Check if there are any pending maintenance requests for the given bus
+                            var pendingMLI = _unitOfWork.MaintenanceLineItem.GetAll(u => u.Id != mli.Id
+                                            && u.BusId == mli.BusId && u.GarageId == mli.GarageId
+                                            && u.Status != Constants.RequestStatus["Complete"]);
+
+                            // Update bus status to ready for use if there are no pending items
+                            if (pendingMLI.Count() == 0)
+                            {
+                                mli.Bus.CurrentStatus = Constants.BusStatus["Ready for use"];
+                            }
+
                         }
+                        //Update the status of the bus to Under going repairs if the maintenance line item is updated to in progress
+                        if (mli.Status == Constants.RequestStatus["In Progress"])
+                        {
+                            mli.Bus.CurrentStatus = Constants.BusStatus["Undergoing repairs"];
 
+                        }
+                        _unitOfWork.MaintenanceLineItem.Update(mli);
                     }
-                    if (mli.Status == Constants.RequestStatus["In Progress"])
-                    {
-                        mli.Bus.CurrentStatus = Constants.BusStatus["Undergoing repairs"];
+                    _unitOfWork.Save();
+                    _unitOfWork.Dispose();
+                    return RedirectToAction(nameof(Index));
 
-                    }
-                    _unitOfWork.MaintenanceLineItem.Update(mli);
                 }
-                _unitOfWork.Save();
-                _unitOfWork.Dispose();
-                return RedirectToAction(nameof(Index));
-
             }
+            catch(Exception ex)
+            {
+                var evm = new ErrorViewModel();
+                evm.ErrorMessage = ex.Message.ToString();
+                return View("Error", evm);
+            }
+
             return View(mliVM);
         }
         #region
@@ -113,6 +141,7 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             return Json(new { data = allObj });
         }
 
+        //Mark the given maintenance line item as completed
         [HttpPost]
         public IActionResult Complete([FromBody] string id)
         {
@@ -121,11 +150,14 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = "Error while changing the status" });
             }
+            //Mark completion date
             objFromDb.CompletedOn = DateTime.Today.Date;
             objFromDb.Status = Constants.RequestStatus["Complete"];
+            // Check if there are any pending maintenance requests for the given bus
             var pendingMLI = _unitOfWork.MaintenanceLineItem.GetAll(u => u.Id != objFromDb.Id
                 && u.BusId == objFromDb.BusId && u.GarageId == objFromDb.GarageId
                 && u.Status != Constants.RequestStatus["Complete"]);
+            // Update bus status to ready for use if there are no pending items
             if (pendingMLI.Count() == 0)
             {
                 objFromDb.Bus.CurrentStatus = Constants.BusStatus["Ready for use"];

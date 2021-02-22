@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.DataAccess.Repository
 {
+    /*
+    DBMethod Implementations that are Specific to Bus
+    */
     public class BusRepository : Repository<Bus>, IBusRepository
     {
         private readonly ApplicationDbContext _db;
@@ -19,6 +22,7 @@ namespace FleetManagementSystem.DataAccess.Repository
 
         public void Update(Bus bus)
         {
+            _db.ChangeTracker.Clear();
             _db.Update(bus);
         }
     }

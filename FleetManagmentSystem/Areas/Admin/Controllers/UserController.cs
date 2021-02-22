@@ -41,6 +41,7 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             return Json(new { data = userList });
         }
 
+        //Lock/unlock the system user
         [HttpPost]
         public IActionResult LockUnlock([FromBody] string id)
         {

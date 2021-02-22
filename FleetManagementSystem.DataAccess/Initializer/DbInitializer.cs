@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.DataAccess.Initializer
 {
+    // Used for data seeding when the application is run for the first time
+    // Creates roles and an Admin User initially
     public class DbInitializer : IDbInitializer
     {
         private readonly ApplicationDbContext _db;
@@ -36,7 +38,7 @@ namespace FleetManagementSystem.DataAccess.Initializer
             {
 
             }
-
+            // Do not create any further roles if a DB is found and it consists of roles
             if (_db.Roles.Any(r => r.Name == Constants.Role_Admin)) return;
 
             _roleManager.CreateAsync(new IdentityRole(Constants.Role_Admin)).GetAwaiter().GetResult();

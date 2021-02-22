@@ -5,6 +5,7 @@ using System.Text;
 
 namespace FleetManagementSystem.Models
 {
+    // Database Model for Bus
     public class Bus
     {
 

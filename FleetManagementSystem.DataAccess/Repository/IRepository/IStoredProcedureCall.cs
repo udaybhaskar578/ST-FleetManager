@@ -5,6 +5,9 @@ using System.Text;
 
 namespace FleetManagementSystem.DataAccess.Repository.IRepository
 {
+    /*
+    Abstract methods for the StoreProcedureCall
+    */
     public interface IStoredProcedureCall : IDisposable
     {
         T Single<T>(string procedureName, DynamicParameters param = null);

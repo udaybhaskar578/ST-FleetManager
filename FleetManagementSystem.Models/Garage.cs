@@ -6,6 +6,7 @@ using System.Text;
 
 namespace FleetManagementSystem.Models
 {
+    // Database Model for Garage
     public class Garage
     {
         [Key]

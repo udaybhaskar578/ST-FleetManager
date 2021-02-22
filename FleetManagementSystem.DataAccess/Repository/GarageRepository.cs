@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.DataAccess.Repository
 {
+    /*
+    DBMethod Implementations that are Specific to Garage
+    */
     public class GarageRepository : Repository<Garage>, IGarageRepository
     {
         private readonly ApplicationDbContext _db;
@@ -28,6 +31,9 @@ namespace FleetManagementSystem.DataAccess.Repository
                 objFromDb.State = garage.State;
                 objFromDb.ZipCode = garage.ZipCode;
                 objFromDb.ClosestGarageId = garage.ClosestGarageId;
+                _db.ChangeTracker.Clear();
+                _db.Update(objFromDb);
+
             }
         }
     }

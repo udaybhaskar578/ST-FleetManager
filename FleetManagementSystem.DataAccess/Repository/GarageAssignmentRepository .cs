@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.DataAccess.Repository
 {
+    /*
+    DBMethod Implementations that are Specific to Garage Assignment 
+    */
     public class GarageAssignmentRepository : Repository<GarageAssignment>, IGarageAssignmentRepository
     {
         private readonly ApplicationDbContext _db;
@@ -21,13 +24,8 @@ namespace FleetManagementSystem.DataAccess.Repository
             var objFromDb = _db.Garages.FirstOrDefault(s => s.Id == garage.Id);
             if (objFromDb != null)
             {
-
-                //objFromDb.Name = garage.Name;
-                //objFromDb.StreetAddress = garage.StreetAddress;
-                //objFromDb.City = garage.City;
-                //objFromDb.State = garage.State;
-                //objFromDb.ZipCode = garage.ZipCode;
-                //objFromDb.ClosestGarageId = garage.ClosestGarageId;
+                _db.ChangeTracker.Clear();
+                _db.Update(objFromDb);
             }
         }
     }

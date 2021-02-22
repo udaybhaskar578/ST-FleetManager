@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.Models
 {
+    // Database Model for Maintenance Request Type
     public class MaintenanceRequestType
     {
         [Key]

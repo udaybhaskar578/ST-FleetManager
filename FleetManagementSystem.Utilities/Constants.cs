@@ -19,7 +19,6 @@ namespace FleetManagementSystem.Utilities
             { 36, "36 Maximum Capacity" }
         };
 
-
         public static readonly Dictionary<int, string> NumberOfWheels = new Dictionary<int, string>
         {
             { 4, "4 Wheeler" },
@@ -28,6 +27,7 @@ namespace FleetManagementSystem.Utilities
             { 10, "10 Wheeler" },
             { 12, "12 Wheeler" }
         };
+
         public static readonly Dictionary<string, string> BusStatus = new Dictionary<string, string>
         {
             { "Scheduled for maintenance", "Scheduled for maintenance" },
@@ -56,26 +56,44 @@ namespace FleetManagementSystem.Utilities
         public const int HistoricYear = 1972;
         public const double HistoricAppreciationPercentage = 0.34;
 
+        //Calculate the resale value of the bus based on the given parameters
+
         public static double? CalculateResaleValue(int Year, int PassengerCapacity,
             double OdomerterReading, bool IsAirConditioned, string CurrentStatus)
         {
             double? resaleValue = null;
-            if (BusStatus[CurrentStatus] == BusStatus[ResaleViableStatus])
+            try
             {
-                var startingSellingPrice = BasePriceonCapacity[PassengerCapacity];
-                resaleValue = startingSellingPrice;
-                double dollarDepreciation = (OdomerterReading / DepreciationMileageMilestone)
-                                            * DollarDepreciationByMileage;
-                if (Year <= 1972)
+                //Check if the bus is in the ready for use status
+                if (BusStatus[CurrentStatus] == BusStatus[ResaleViableStatus])
                 {
-                    resaleValue += startingSellingPrice * HistoricAppreciationPercentage;
-                }
-                if (IsAirConditioned)
-                {
-                    resaleValue += startingSellingPrice * ACAppreciationPercentage;
-                }
-                resaleValue -= dollarDepreciation;
+                    var startingSellingPrice = BasePriceonCapacity[PassengerCapacity];
+                    resaleValue = startingSellingPrice;
 
+                    //Calculate the depreciation because of the mileage
+                    double dollarDepreciation = (OdomerterReading / DepreciationMileageMilestone)
+                                                * DollarDepreciationByMileage;
+
+                    /*Check if the bus is historic and increase the base price 
+                     by a certain percentage if it is*/
+                    if (Year <= HistoricYear)
+                    {
+                        resaleValue += startingSellingPrice * HistoricAppreciationPercentage;
+                    }
+                    /*Check if the bus is historic and increase the base price 
+                     by a certain percentage if it is*/
+                    if (IsAirConditioned)
+                    {
+                        resaleValue += startingSellingPrice * ACAppreciationPercentage;
+                    }
+                    resaleValue -= dollarDepreciation;
+
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return resaleValue.GetValueOrDefault();
             }
 
             return resaleValue != null? Math.Round(resaleValue.GetValueOrDefault(),2):resaleValue;

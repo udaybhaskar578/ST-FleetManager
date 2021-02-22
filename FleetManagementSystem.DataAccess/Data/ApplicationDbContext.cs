@@ -7,6 +7,8 @@ using System.Text;
 
 namespace FleetManagementSystem.DataAccess.Data
 {
+    //Implements Identity DB context for the usage of ASP.Net Identity
+    // Contains all the database tables that are required 
     public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

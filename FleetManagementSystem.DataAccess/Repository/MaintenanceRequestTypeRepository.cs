@@ -7,8 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace FleetManagementSystem.DataAccess.Repository
 {
+    /*
+    DBMethod Implementations that are Specific to Maintenance Request Type
+    */
     public class MaintenanceRequestTypeRepository : Repository<MaintenanceRequestType>, IMaintenanceRequestTypeRepository
     {
         private readonly ApplicationDbContext _db;
@@ -19,6 +23,8 @@ namespace FleetManagementSystem.DataAccess.Repository
 
         public void Update(MaintenanceRequestType maintenanceRequestType)
         {
+            _db.ChangeTracker.Clear();
+
             _db.Update(maintenanceRequestType);
         }
     }

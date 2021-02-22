@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.Models
 {
+    // Database Model for Maintenance Line Item
     public class MaintenanceLineItem
     {
         [Key]

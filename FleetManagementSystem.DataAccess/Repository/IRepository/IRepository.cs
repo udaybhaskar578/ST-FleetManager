@@ -6,6 +6,9 @@ using System.Text;
 
 namespace FleetManagementSystem.DataAccess.Repository.IRepository
 {
+    /*
+    Abstract methods for the Repository Pattern
+    */
     public interface IRepository<T> where T : class
     {
         T Get(int id);

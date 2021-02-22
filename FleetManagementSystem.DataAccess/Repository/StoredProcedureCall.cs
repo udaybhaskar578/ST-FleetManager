@@ -8,6 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+/*
+Implementation of IStoredProcedure Call. Helps us to communcaite with the DB
+with stored procedures as needed.
+*/ 
+
 namespace FleetManagementSystem.DataAccess.Repository
 {
     public class StoredProcedureCall : IStoredProcedureCall

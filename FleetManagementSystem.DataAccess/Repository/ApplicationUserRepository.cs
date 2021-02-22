@@ -7,6 +7,9 @@ using System.Text;
 
 namespace FleetManagementSystem.DataAccess.Repository
 {
+    /*
+    DBMethod Implementations that are Specific to User
+    */
     public class ApplicationUserRepository : Repository<ApplicationUser>, IApplicationUserRepository
     {
         private readonly ApplicationDbContext _db;

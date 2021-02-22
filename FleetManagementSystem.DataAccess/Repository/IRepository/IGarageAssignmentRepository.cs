@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.DataAccess.Repository.IRepository
 {
+    /*
+    Abstract methods for the Garage Assignment entity
+    */
     public interface IGarageAssignmentRepository: IRepository<GarageAssignment>
     {
         void Update(GarageAssignment garageAssignment);

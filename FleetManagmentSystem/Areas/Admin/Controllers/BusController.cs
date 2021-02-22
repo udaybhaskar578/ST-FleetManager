@@ -1,5 +1,6 @@
 ﻿using FleetManagementSystem.DataAccess.Repository.IRepository;
 using FleetManagementSystem.Models;
+using FleetManagementSystem.Models.ViewModel;
 using FleetManagementSystem.Models.ViewModels;
 using FleetManagementSystem.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -31,96 +32,130 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             return View();
         }
 
+        //Insert or Update action for Bus
         public IActionResult Upsert(int? id)
         {
             Bus bus = new Bus();
-            if (id == null)
+            try
             {
-                bus.CurrentStatus = Constants.BusStatus["Ready for use"];
-                return View(bus);
+                //Check if it is an insert operation
+                if (id == null)
+                {
+                    bus.CurrentStatus = Constants.BusStatus["Ready for use"];
+                    return View(bus);
+                }
+                //Get the bus details from DB for update
+                bus = _unitOfWork.Bus.Get(id.GetValueOrDefault());
+                if (bus == null)
+                {
+                    throw new Exception("Unable to Find the bus");
+                }
             }
-            bus = _unitOfWork.Bus.Get(id.GetValueOrDefault());
-            if (bus == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                var evm = new ErrorViewModel();
+                evm.ErrorMessage = ex.Message.ToString();
+                return View("Error", evm);
             }
+
+
             return View(bus);
         }
 
+        //Insert/Update Bus in Database 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(Bus bus)
         {
-            if (ModelState.IsValid)
+            try
             {
-
-                string webRootPath = _hostEnvironment.WebRootPath;
-                var files = HttpContext.Request.Form.Files;
-                bus.ResaleValue = Constants.CalculateResaleValue(bus.Year, bus.MaximumCapacity,
-                                    bus.OdometerReading, bus.AirConditioning,
-                                    bus.CurrentStatus).GetValueOrDefault();
-                bus.ResaleValue = Math.Round(bus.ResaleValue, 2);
-                if (files.Count > 0)
+                if (ModelState.IsValid)
                 {
-                    string fileName = Guid.NewGuid().ToString();
-                    var uploads = Path.Combine(webRootPath, @"images\buses");
-                    var extension = Path.GetExtension(files[0].FileName);
-                    if (bus.ImageUrl != null)
+                    //Get Images
+                    string webRootPath = _hostEnvironment.WebRootPath;
+                    var files = HttpContext.Request.Form.Files;
+                    //Calculate resale value of the bus
+                    bus.ResaleValue = Constants.CalculateResaleValue(bus.Year, bus.MaximumCapacity,
+                                        bus.OdometerReading, bus.AirConditioning,
+                                        bus.CurrentStatus).GetValueOrDefault();
+                    bus.ResaleValue = Math.Round(bus.ResaleValue, 2);
+                    //If there is an image make necessary modifications
+                    if (files.Count > 0)
                     {
-                        //Removing previous image
-                        var imagePath = Path.Combine(webRootPath, bus.ImageUrl.TrimStart('\\'));
-                        if (System.IO.File.Exists(imagePath))
+                        string fileName = Guid.NewGuid().ToString();
+                        var uploads = Path.Combine(webRootPath, @"images\buses");
+                        var extension = Path.GetExtension(files[0].FileName);
+                        if (bus.ImageUrl != null)
                         {
-                            System.IO.File.Delete(imagePath);
+                            //Removing previous image
+                            var imagePath = Path.Combine(webRootPath, bus.ImageUrl.TrimStart('\\'));
+                            if (System.IO.File.Exists(imagePath))
+                            {
+                                System.IO.File.Delete(imagePath);
+                            }
+
                         }
+                        using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                        {
+                            files[0].CopyTo(fileStreams);
+                        }
+                        bus.ImageUrl = @"\images\buses\" + fileName + extension;
 
                     }
-                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                    else
                     {
-                        files[0].CopyTo(fileStreams);
-                    }
-                    bus.ImageUrl = @"\images\buses\" + fileName + extension;
+                        //Set Image URL if there is no update in the image
+                        if (bus.Id != 0)
+                        {
 
+                            Bus objFromDb = _unitOfWork.Bus.Get(bus.Id);
+                            bus.ImageUrl = objFromDb.ImageUrl;
+                        }
+                    }
+
+                    //Insert New Bus
+                    if (bus.Id == 0)
+                    {
+                        bus.CurrentStatus = Constants.BusStatus["Ready for use"];
+                        _unitOfWork.Bus.Add(bus);
+
+                    }
+                    //Update Bus
+                    else
+                    {
+                        _unitOfWork.Bus.Update(bus);
+                    }
+                    _unitOfWork.Save();
+                    return RedirectToAction(nameof(Index));
                 }
+                //If Model is invalid return the bus entity back
                 else
                 {
                     if (bus.Id != 0)
                     {
-                        
-                        Bus objFromDb = _unitOfWork.Bus.Get(bus.Id);
-                        bus.ImageUrl = objFromDb.ImageUrl;
+                        bus = _unitOfWork.Bus.Get(bus.Id);
                     }
                 }
-                if (bus.Id == 0)
-                {
-                    bus.CurrentStatus = Constants.BusStatus["Ready for use"];
-                    _unitOfWork.Bus.Add(bus);
-
-                }
-                else
-                {
-                    _unitOfWork.Bus.Update(bus);
-                }
-                _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
             }
-            else
+            catch (Exception ex)
             {
-                if (bus.Id != 0)
+                var evm = new ErrorViewModel
                 {
-                    bus = _unitOfWork.Bus.Get(bus.Id);
-                }
+                    ErrorMessage = ex.Message.ToString()
+                };
+                return View("Error", evm);
             }
             return View(bus);
         }
 
+        //Assign bus to a garage
         public IActionResult Assign(int? id)
         {
 
             GarageAssignmentViewModel gavm = new GarageAssignmentViewModel()
             {
                 GarageAssignment = new GarageAssignment(),
-                
+
                 GarageList = _unitOfWork.Garage.GetAll().Select(i => new SelectListItem
                 {
                     Text = i.Name,
@@ -132,47 +167,71 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
                     Value = i.Id.ToString()
                 })
             };
-            if (id == null)
+            try
             {
-                return View(gavm);
-            }
-            
-            gavm.GarageAssignment.BusId = id.GetValueOrDefault();
-            gavm.GarageAssignment.Bus = _unitOfWork.Bus.Get(id.GetValueOrDefault());
+                if (id == null)
+                {
+                    return View(gavm);
+                }
 
-            //Check if the bus is parked in any garage
-            var assignedGarage = _unitOfWork.GarageAssignment.GetFirstOrDefault(u => u.BusId == id && u.CheckOut == null, includeProperties: "Garage,Bus");
-            if(assignedGarage != null)
-            {
-                gavm.GarageAssignment.GarageId = assignedGarage.GarageId;
-                gavm.GarageAssignment.Garage = assignedGarage.Garage;
-                gavm.GarageAssignment.CheckIn = assignedGarage.CheckIn;
+                gavm.GarageAssignment.BusId = id.GetValueOrDefault();
+                gavm.GarageAssignment.Bus = _unitOfWork.Bus.Get(id.GetValueOrDefault());
+
+                //Check if the bus is parked in any garage
+                var assignedGarage = _unitOfWork.GarageAssignment.GetFirstOrDefault(u => u.BusId == id && u.CheckOut == null, includeProperties: "Garage,Bus");
+                if (assignedGarage != null)
+                {
+                    gavm.GarageAssignment.GarageId = assignedGarage.GarageId;
+                    gavm.GarageAssignment.Garage = assignedGarage.Garage;
+                    gavm.GarageAssignment.CheckIn = assignedGarage.CheckIn;
+                }
+                if (gavm.GarageAssignment.Bus == null)
+                {
+                    throw new Exception("Unable to find the garage assignment for the bus");
+                }
             }
-            if (gavm.GarageAssignment.Bus == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                var evm = new ErrorViewModel
+                {
+                    ErrorMessage = ex.Message.ToString()
+                };
+                return View("Error", evm);
             }
             return View(gavm);
         }
 
+        //Update Database value with the garage assignment
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Assign(GarageAssignmentViewModel gavm)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (gavm.GarageAssignment.Id == 0)
+                if (ModelState.IsValid)
                 {
-                    _unitOfWork.GarageAssignment.Add(gavm.GarageAssignment);
+                    if (gavm.GarageAssignment.Id == 0)
+                    {
+                        _unitOfWork.GarageAssignment.Add(gavm.GarageAssignment);
+                    }
+                    else
+                    {
+                        _unitOfWork.GarageAssignment.Update(gavm.GarageAssignment);
+                    }
+                    _unitOfWork.Save();
+                    return RedirectToAction(nameof(Index));
+
                 }
-                else
-                {
-                    _unitOfWork.GarageAssignment.Update(gavm.GarageAssignment);
-                }
-                _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
-                
             }
+            catch(Exception ex)
+            {
+                var evm = new ErrorViewModel
+                {
+                    ErrorMessage = ex.Message.ToString()
+                };
+                return View("Error", evm);
+            }
+
             return View(gavm);
         }
 

@@ -1,5 +1,6 @@
 ﻿using FleetManagementSystem.DataAccess.Repository.IRepository;
 using FleetManagementSystem.Models;
+using FleetManagementSystem.Models.ViewModel;
 using FleetManagementSystem.Models.ViewModels;
 using FleetManagementSystem.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -26,18 +27,29 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             return View();
         }
 
+        //Insert or Update action for Maintenance request type
         public IActionResult Upsert(int? id)
         {
             MaintenanceRequestType maintenanceRequestType = new MaintenanceRequestType();
-            if (id == null)
+            try
             {
-                return View(maintenanceRequestType);
+                if (id == null)
+                {
+                    return View(maintenanceRequestType);
+                }
+                maintenanceRequestType = _unitOfWork.MaintenanceRequestType.Get(id.GetValueOrDefault());
+                if (maintenanceRequestType == null)
+                {
+                    throw new Exception("Unable to find the maintenance request type");
+                }
             }
-            maintenanceRequestType = _unitOfWork.MaintenanceRequestType.Get(id.GetValueOrDefault());
-            if (maintenanceRequestType == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                var evm = new ErrorViewModel();
+                evm.ErrorMessage = ex.Message.ToString();
+                return View("Error", evm);
             }
+
             return View(maintenanceRequestType);
         }
 
@@ -46,21 +58,31 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(MaintenanceRequestType MaintenanceRequestType)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (MaintenanceRequestType.Id == 0)
+                if (ModelState.IsValid)
                 {
-                    _unitOfWork.MaintenanceRequestType.Add(MaintenanceRequestType);
+                    if (MaintenanceRequestType.Id == 0)
+                    {
+                        _unitOfWork.MaintenanceRequestType.Add(MaintenanceRequestType);
 
-                }
-                else
-                {
+                    }
+                    else
+                    {
 
-                    _unitOfWork.MaintenanceRequestType.Update(MaintenanceRequestType);
+                        _unitOfWork.MaintenanceRequestType.Update(MaintenanceRequestType);
+                    }
+                    _unitOfWork.Save();
+                    return RedirectToAction(nameof(Index));
                 }
-                _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
             }
+            catch(Exception ex)
+            {
+                var evm = new ErrorViewModel();
+                evm.ErrorMessage = ex.Message.ToString();
+                return View("Error", evm);
+            }
+
             return View(MaintenanceRequestType);
         }
 
@@ -72,6 +94,7 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             return Json(new { data = allObj });
         }
 
+        //Toggle the active status of the given maintenance request type
         [HttpPost]
         public IActionResult ToggleActiveStatus([FromBody] string id)
         {

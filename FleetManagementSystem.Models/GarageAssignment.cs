@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.Models
 {
+    // Database Model for Garage Assignment
     public class GarageAssignment
     {
         [Key]

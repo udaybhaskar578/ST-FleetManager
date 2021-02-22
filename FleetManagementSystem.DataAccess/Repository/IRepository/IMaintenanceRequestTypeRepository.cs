@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.DataAccess.Repository.IRepository
 {
+    /*
+    Abstract methods for the Maintenance Request Type entity
+    */
     public interface IMaintenanceRequestTypeRepository : IRepository<MaintenanceRequestType>
     {
         void Update(MaintenanceRequestType maintenanceRequestType);

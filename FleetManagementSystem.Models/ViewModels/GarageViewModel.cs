@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.Models.ViewModels
 {
+    /*Used in the Upsert page for the Garage, brings in all the garages 
+    in the system for us to assing closest garage*/
     public class GarageViewModel
     {
         public Garage Garage { get; set; }

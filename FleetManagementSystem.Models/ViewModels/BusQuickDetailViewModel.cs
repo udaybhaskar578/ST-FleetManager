@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.Models.ViewModels
 {
+    /*
+     * View model created to handle data passed to recalculate the resale value of a car from BusModalPartialView
+     */
     public class BusQuickDetailViewModel
     {
         public int Id { get; set; }

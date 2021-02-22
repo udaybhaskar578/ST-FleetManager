@@ -36,7 +36,7 @@ namespace FleetManagementSystem.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel { ErrorMessage = "Unfortunately we are experiencing fuew difficulties. Please revisit after some time." });
         }
     }
 }

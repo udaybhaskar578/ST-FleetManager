@@ -7,6 +7,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
+/*
+Repository pattern supports the objective of achieving a clean separation and one-way dependency between the domain and data mapping layers.
+*/
 namespace FleetManagementSystem.DataAccess.Repository
 {
     public class Repository<T> : IRepository<T> where T : class

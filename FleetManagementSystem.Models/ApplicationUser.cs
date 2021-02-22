@@ -7,6 +7,10 @@ using System.Text;
 
 namespace FleetManagementSystem.Models
 {
+    /*
+    Application user implements the Identity User in ASP.Net.Identity
+    This allows us to build the user infra on top of the existing  ASPNetUser and roles
+    */
     public class ApplicationUser : IdentityUser
     {
         [Required]

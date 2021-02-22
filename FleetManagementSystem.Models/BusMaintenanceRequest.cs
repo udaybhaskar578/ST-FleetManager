@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagementSystem.Models
 {
+    // Database Model for Bus Maintenance Request
     public class BusMaintenanceRequest
     {
         [Key]

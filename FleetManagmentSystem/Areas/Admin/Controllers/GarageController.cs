@@ -1,5 +1,6 @@
 ﻿using FleetManagementSystem.DataAccess.Repository.IRepository;
 using FleetManagementSystem.Models;
+using FleetManagementSystem.Models.ViewModel;
 using FleetManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,6 +24,7 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
             return View();
         }
 
+        //Insert or Update action for Garage
         public IActionResult Upsert(int? id)
         {
             GarageViewModel garagevm = new GarageViewModel()
@@ -34,38 +36,58 @@ namespace FleetManagementSystem.Areas.Admin.Controllers
                     Value = i.Id.ToString()
                 })
             };
-            if (id == null)
+            try
             {
-                return View(garagevm);
+                if (id == null)
+                {
+                    return View(garagevm);
+                }
+                garagevm.Garage = _unitOfWork.Garage.Get(id.GetValueOrDefault());
+                if (garagevm.Garage == null)
+                {
+                    throw new Exception("Unable to find the garage");
+                }
             }
-            garagevm.Garage = _unitOfWork.Garage.Get(id.GetValueOrDefault());
-            if (garagevm.Garage == null)
+            catch(Exception ex)
             {
-                return NotFound();
+                var evm = new ErrorViewModel();
+                evm.ErrorMessage = ex.Message.ToString();
+                return View("Error", evm);
             }
+
             return View(garagevm);
         }
 
 
+        //Insert/Update Garage in Database 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(GarageViewModel garagevm)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (garagevm.Garage.Id == 0)
+                if (ModelState.IsValid)
                 {
-                    _unitOfWork.Garage.Add(garagevm.Garage);
+                    if (garagevm.Garage.Id == 0)
+                    {
+                        _unitOfWork.Garage.Add(garagevm.Garage);
 
-                }
-                else
-                {
+                    }
+                    else
+                    {
 
-                    _unitOfWork.Garage.Update(garagevm.Garage);
+                        _unitOfWork.Garage.Update(garagevm.Garage);
+                    }
+                    _unitOfWork.Save();
+                    return RedirectToAction(nameof(Index));
                 }
-                _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
+            }catch(Exception ex)
+            {
+                var evm = new ErrorViewModel();
+                evm.ErrorMessage = ex.Message.ToString();
+                return View("Error", evm);
             }
+
             return View(garagevm);
         }
 
