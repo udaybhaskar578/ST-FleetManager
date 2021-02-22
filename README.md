@@ -72,6 +72,12 @@ Fleet Manager is an fleet managment system which allows the following activities
 
 **Future enhancements/updates:**
 
+- Assigning Technician to a garage
+- Show maintenance requests only related to technician
+- Allow multiple closest garages assignment to a garage
+- Only allow Admin to delete bus records
+- Create a Maintenance header entity to envolope all the maintenance requests done at a time 
+
 
 **Assumptions:**
 
