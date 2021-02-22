@@ -39,31 +39,3 @@ function loadDataTable() {
     });
 
 }
-//<a onclick=Delete("/Admin/Garage/Delete/${data}") class="btn btn-danger text-white" style = "cursor:pointer" >
-//    <i class="fas fa-trash-alt"></i> 
-//</a >
-//function Delete(url) {
-//    swal({
-//        title: "Are you sure you would like to delete the Garage entry?",
-//        text: "You will not be able to resotre the data",
-//        icon: "warning",
-//        buttons: true,
-//        dangerMode: true
-//    }).then((willDelete) => {
-//        if (willDelete) {
-//            $.ajax({
-//                type: "DELETE",
-//                url: url,
-//                success: function (data) {
-//                    if (data.success == true) {
-//                        toastr.success(data.message);
-//                        dataTable.ajax.reload();
-//                    }
-//                    else {
-//                        toastr.error(data.message);
-//                    }
-//                }
-//            });
-//        }
-//    });
-//}

@@ -21,7 +21,7 @@
         <div class="col-8 pt-4">
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Garage.Name"></label>
+                    Name
                 </div>
                 <div class="col-8">
                     <input asp-for="Garage.Name" class="form-control" />
@@ -30,7 +30,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Garage.StreetAddress"></label>
+                    Street Address
                 </div>
                 <div class="col-8">
                     <input asp-for="Garage.StreetAddress" class="form-control" />
@@ -39,7 +39,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Garage.City"></label>
+                    City
                 </div>
                 <div class="col-8">
                     <input asp-for="Garage.City" class="form-control" />
@@ -48,7 +48,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Garage.State"></label>
+                    State
                 </div>
                 <div class="col-8">
                     <input asp-for="Garage.State" class="form-control" />
@@ -57,7 +57,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Garage.ZipCode"></label>
+                    Zip code
                 </div>
                 <div class="col-8">
                     <input asp-for="Garage.ZipCode" class="form-control" />
@@ -66,7 +66,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    Category
+                    Closest Garage
                 </div>
                 <div class="col-8">
                     @Html.DropDownListFor(m => m.Garage.ClosestGarageId, Model.ClosestGarageList, "-Select the Closest Garage",

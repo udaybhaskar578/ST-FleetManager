@@ -49,33 +49,6 @@ function loadDataTable() {
 
 }
 
-//function ToggleActiveStatus(url) {
-//    swal({
-//        title: "Are you sure you would like to change the status the maintenance entry?",
-//        text: "You will not be able to resotre the data",
-//        icon: "warning",
-//        buttons: true,
-//        dangerMode: true
-//    }).then((willDelete) => {
-//        if (willDelete) {
-//            $.ajax({
-//                type: "POST",
-//                url: url,
-//                success: function (data) {
-//                    if (data.success == true) {
-//                        toastr.success(data.message);
-//                        dataTable.ajax.reload();
-//                    }
-//                    else {
-//                        toastr.error(data.message);
-//                    }
-//                }
-//            });
-//        }
-//    });
-//}
-
-
 function ToggleActiveStatus(id) {
 
     $.ajax({
