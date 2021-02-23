@@ -4,26 +4,27 @@ $(document).ready(function () {
 });
 
 function loadDataTable() {
-    dataTable = $('#tblData').DataTable({
-        "ajax": {
-            "url": "/Admin/Garage/GetAll"
-        },
-        "columns": [
-            { "data": "name", "width": "15%" },
-            { "data": "streetAddress", "width": "15%" },
-            { "data": "city", "width": "15%" },
-            { "data": "state", "width": "15%" },
-            { "data": "zipCode", "width": "15%" },
-            {
-                "data": "closestGarage.name",
-                "defaultContent": "Not set yet",
-                "width": "15%"
+    try {
+        dataTable = $('#tblData').DataTable({
+            "ajax": {
+                "url": "/Admin/Garage/GetAll"
             },
-            {
-                "data": "id",
-                "orderable": false,
-                "render": function (data) {
-                    return `
+            "columns": [
+                { "data": "name", "width": "15%" },
+                { "data": "streetAddress", "width": "15%" },
+                { "data": "city", "width": "15%" },
+                { "data": "state", "width": "15%" },
+                { "data": "zipCode", "width": "15%" },
+                {
+                    "data": "closestGarage.name",
+                    "defaultContent": "Not set yet",
+                    "width": "15%"
+                },
+                {
+                    "data": "id",
+                    "orderable": false,
+                    "render": function (data) {
+                        return `
                     <div class="text-center">
                         <a href="/Admin/Garage/Upsert/${data}" class="btn btn-success text-white" style="cursor:pointer">
                             <i class="fas fa-edit"></i>
@@ -32,10 +33,15 @@ function loadDataTable() {
                     </div>
                     `;
 
-                }, "width": "40%"
-            }
+                    }, "width": "40%"
+                }
 
-        ]
-    });
+            ]
+        });
+    } catch (error) {
+        alert("Unable to load the data tables at this point \n Error:" + error.message);
+        console.log(error);
+    }
+
 
 }

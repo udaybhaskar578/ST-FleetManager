@@ -4,33 +4,34 @@ $(document).ready(function () {
 });
 
 function loadDataTable() {
-    dataTable = $('#tblData').DataTable({
-        "ajax": {
-            "url": "/Admin/Bus/GetAll"
-        },
-        "columns": [
-            { "data": "registrationNumber", "width": "10%"},
-            { "data": "vin", "width": "10%"},
-            { "data": "make", "width": "10%" },
-            { "data": "model", "width": "8%" },
-            { "data": "maximumCapacity", "width": "10%", "className": "text-right"},
-            {
-                "data": "airConditioning",
-                "render": function (data) {
-                    if (data) {
-                        return `<input type="checkbox" disabled checked/>`;
-                    }
-                    else {
-                        return `<input type="checkbox" disabled/>`;
-                    }
-                }, "width": "5%", "className": "text-center"
+    try {
+        dataTable = $('#tblData').DataTable({
+            "ajax": {
+                "url": "/Admin/Bus/GetAll"
             },
-            { "data": "currentStatus", "width": "15%" },
-            {
-                "data": "id",
-                "orderable": false,
-                "render": function (data) {
-                    return `
+            "columns": [
+                { "data": "registrationNumber", "width": "10%" },
+                { "data": "vin", "width": "10%" },
+                { "data": "make", "width": "10%" },
+                { "data": "model", "width": "8%" },
+                { "data": "maximumCapacity", "width": "10%", "className": "text-right" },
+                {
+                    "data": "airConditioning",
+                    "render": function (data) {
+                        if (data) {
+                            return `<input type="checkbox" disabled checked/>`;
+                        }
+                        else {
+                            return `<input type="checkbox" disabled/>`;
+                        }
+                    }, "width": "5%", "className": "text-center"
+                },
+                { "data": "currentStatus", "width": "15%" },
+                {
+                    "data": "id",
+                    "orderable": false,
+                    "render": function (data) {
+                        return `
                     <div class="text-center">
                         <a href="/Admin/Bus/Upsert/${data}" class="btn btn-success text-white" style="cursor:pointer">
                             <i class="fas fa-edit"></i>
@@ -45,11 +46,17 @@ function loadDataTable() {
                     </div>
                     `;
 
-                }, "width": "10%"
-            }
+                    }, "width": "10%"
+                }
 
-        ]
-    });
+            ]
+        });
+    }
+    catch (error) {
+        alert("Unable to load the data tables at this point \n Error:"+error.message);
+        console.log(error);
+    }
+
 
 }
 
